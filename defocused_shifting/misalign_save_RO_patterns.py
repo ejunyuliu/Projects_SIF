@@ -10,25 +10,12 @@ import seaborn as sns
 import h5py
 from pathlib import Path
 
-# Set to number of cores on your machine
-CORES = 4
-plt.rcParams['figure.figsize'] = [9.5, 6]
-
-# DEFINE CONSTANTS
-k = 2 * np.pi / (635 / 1.33)  # wavenumber in medium
-fov = 14600  # size of field of view
-
 
 # DEFINE MESH
 def getMesh(xmin, xmax, ymin, ymax, nx=200, ny=200):
     x = np.linspace(xmin, xmax, nx)
     y = np.linspace(ymin, ymax, ny)
     return np.meshgrid(x, y)
-
-
-xv, yv = getMesh(-0.5, 0.5, -0.5, 0.5)
-xv = xv * fov;
-yv = yv * fov
 
 
 def iPSF_misalignment(xv, yv, k, x0, y0, zpp, E0, phi0, ma_theta, ma_phi):
@@ -52,15 +39,28 @@ def iPSF_misalignment(xv, yv, k, x0, y0, zpp, E0, phi0, ma_theta, ma_phi):
     return phi_ma, phi_de, phi_diff, iPSF_cos, iPSF
 
 
-#
-iPSF = np.zeros_like(xv)
+if __name__ == '__main__':
+    # Set to number of cores on your machine
+    CORES = 4
+    plt.rcParams['figure.figsize'] = [9.5, 6]
 
-for zpp in [10, 10000]:
-    for phi in [0, 120]:
-        phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, 0.3, np.pi / 2, 22, phi)
+    # DEFINE CONSTANTS
+    k = 2 * np.pi / (635 / 1.33)  # wavenumber in medium
+    fov = 14600  # size of field of view
 
-        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_ma.tif', phi_ma)
-        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_de.tif', phi_de)
-        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_diff.tif', phi_diff)
-        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF_cos.tif', iPSF_cos)
-        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF.tif', iPSF)
+    xv, yv = getMesh(-0.5, 0.5, -0.5, 0.5)
+    xv = xv * fov
+    yv = yv * fov
+
+    # Generate
+    iPSF = np.zeros_like(xv)
+
+    for zpp in [10, 10000]:
+        for phi in [0, 120]:
+            phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, 0.3, np.pi / 2, 22, phi)
+
+            tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_ma.tif', phi_ma)
+            tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_de.tif', phi_de)
+            tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_diff.tif', phi_diff)
+            tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF_cos.tif', iPSF_cos)
+            tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF.tif', iPSF)

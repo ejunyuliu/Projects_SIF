@@ -9,10 +9,8 @@ def evenly_spaced_numbers(rs, re, x):
     range_end = re
     numbers = []
 
-    # 计算步长
     step = (range_end - range_start) / (x - 1) if x > 1 else 0
 
-    # 生成等间隔的数
     for i in range(x):
         num = round(range_start + i * step)
         if num > range_end:
