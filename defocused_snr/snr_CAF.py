@@ -22,10 +22,11 @@ def evenly_spaced_numbers(rs, re, x):
 
 
 if __name__ == '__main__':
-    data = tifffile.imread('sample-48-1.tif')
+    data = tifffile.imread('CAF-48-1.tif')
     data = data.transpose((2, 1, 0))
 
-    df = pd.read_csv('roi.csv')
+    df = pd.read_csv('CAF_roi.csv')
+    # df = pd.read_csv('CAF_bkg.csv')
 
     X = df.X.values
     Y = df.Y.values
