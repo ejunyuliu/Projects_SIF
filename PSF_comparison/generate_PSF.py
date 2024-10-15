@@ -33,8 +33,8 @@ def psf_detection(r, z, wavelength, NA, n, d):
 
 if __name__ == '__main__':
     NA = 1.4
-    lam = 561
-    n = 1.5
+    lam = 488
+    n = 1.33
 
     airydisk = 1.22 * lam / NA
     pinhole_au = 0.3

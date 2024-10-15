@@ -45,7 +45,7 @@ if __name__ == '__main__':
     plt.rcParams['figure.figsize'] = [9.5, 6]
 
     # DEFINE CONSTANTS
-    k = 2 * np.pi / (635 / 1.33)  # wavenumber in medium
+    k = 2 * np.pi / (488 / 1.33)  # wavenumber in medium
     fov = 14600  # size of field of view
 
     xv, yv = getMesh(-0.5, 0.5, -0.5, 0.5)

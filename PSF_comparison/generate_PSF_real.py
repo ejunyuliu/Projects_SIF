@@ -38,8 +38,8 @@ def Gaussian_PSF(X, Y, Z, fwhm_x, fwhm_y, fwhm_z):
 
 if __name__ == '__main__':
     NA = 0.8
-    lam = 561
-    n = 1.5
+    lam = 488
+    n = 1.33
 
     # generate grid
     pixel_size = 20

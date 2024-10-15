@@ -6,6 +6,13 @@ And the inner function 'iPSF_misalignment' (line 21-39)
 matches the equations of RO-iSCAT model.
 
 
+**./oblique_conhere/PSF_compare_RO_spec.py**: 
+
+codes to generate PSFs w/ or w/o RO and spectrum scanning. Also
+visualizes the center intensity (x=0,y=0 position) of PSFs 
+at varying depth.
+
+
 **./defocused_snr/snr_CAF.py**:
 
 script to calculate the snr of several rois choosen from CAF cells and 
