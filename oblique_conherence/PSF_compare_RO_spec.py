@@ -9,16 +9,16 @@ import xarray as xr
 import seaborn as sns
 import h5py
 from pathlib import Path
-
+from tqdm import tqdm
 
 def save_tiff(filename, data):
     with tifffile.TiffWriter(filename, imagej=True) as tif:
         if data.ndim == 4:
             dat = np.moveaxis(data, [2, 3, 1, 0], [0, 1, 2, 3])
-            tif.save(dat[None, :, :, :, :].astype(np.float32))  # TZCYXS
+            tif.write(dat[None, :, :, :, :].astype(np.float32))  # TZCYXS
         elif data.ndim == 3:
             d = np.moveaxis(data, [2, 1, 0], [0, 1, 2])
-            tif.save(d[None, :, None, :, :].astype(np.float32))  # TZCYXS
+            tif.write(d[None, :, None, :, :].astype(np.float32))  # TZCYXS
 
 
 # DEFINE MESH
@@ -69,20 +69,24 @@ if __name__ == '__main__':
     lam=488
     lam_list = range(400, 600, 1)
 
-    zpp = 10
+    zpp = 10000
     zpp_list = range(0, 10000, 200)
 
     # ------------------------------------------- Single depth ------------------------------------------- #
+    print('----- Single depth -----')
+
     # non-RO
+    print('non-RO')
     k = 2 * np.pi / (lam / 1.33)  # wavenumber in medium
     E = E0
     phi = 0
     phi_ma, phi_de, phi_diff, iPSF_cos, iPSF_nonRO = iPSF_misalignment(xv, yv, k, 0, 0, zpp, E, np.pi / 2,
                                                                        oblique, phi)
     # non-RO, spectrum
+    print('non-RO, spectrum')
     iPSF_nonRO_spec = 0
     phi = 0
-    for lam in lam_list:
+    for lam in tqdm(lam_list):
         E = E0 / (lam ** 3)
         k = 2 * np.pi / (lam / 1.33)
         phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, E,
@@ -91,6 +95,7 @@ if __name__ == '__main__':
         iPSF_nonRO_spec = iPSF_nonRO_spec + iPSF
 
     # RO
+    print('RO')
     iPSF_RO = 0
     k = 2 * np.pi / (lam / 1.33)  # wavenumber in medium
     E = E0
@@ -100,8 +105,9 @@ if __name__ == '__main__':
         iPSF_RO = iPSF_RO + iPSF
 
     # RO,spectrum
+    print('RO, spectrum')
     iPSF_RO_spec = 0
-    for lam in lam_list:
+    for lam in tqdm(lam_list):
         E = E0 / (lam ** 3)
         k = 2 * np.pi / (lam / 1.33)
         for phi in range(0, 360, 10):
@@ -116,14 +122,14 @@ if __name__ == '__main__':
     save_tiff('iPSF_RO_spec.tif', iPSF_RO_spec[..., None])
 
     # ------------------------------------------- Multi depth ------------------------------------------- #
+    print('----- Multi depth -----')
+
     center_nonRO = []
     center_nonRO_spec=[]
     center_RO = []
     center_RO_spec = []
 
-    for zpp in zpp_list:
-        print(zpp)
-
+    for zpp in tqdm(zpp_list):
         # nonRO
         k = 2 * np.pi / (lam / 1.33)  # wavenumber in medium
         E = E0

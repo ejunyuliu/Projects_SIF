@@ -55,8 +55,16 @@ if __name__ == '__main__':
     # Generate
     iPSF = np.zeros_like(xv)
 
-    for zpp in [10, 10000]:
-        for phi in [0, 120]:
+    for zpp in [10,500, 1000, 1500, 10000]:
+        iPSF_RO = 0
+        for phi in range(0, 360, 5):
+            phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, 0.3, np.pi / 2, 22, phi)
+            iPSF_RO = iPSF_RO + iPSF
+
+        tifffile.imwrite('./output/tif/z=' + str(zpp) + ' RO_iPSF.tif', iPSF_RO)
+
+
+        for phi in [0, 90, 120, 200]:
             phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, 0.3, np.pi / 2, 22, phi)
 
             tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_ma.tif', phi_ma)
@@ -64,3 +72,12 @@ if __name__ == '__main__':
             tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' phi_diff.tif', phi_diff)
             tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF_cos.tif', iPSF_cos)
             tifffile.imwrite('./output/tif/z=' + str(zpp) + ' phi=' + str(phi) + ' iPSF.tif', iPSF)
+
+    # iPSF_RO_3D = np.zeros(iPSF.shape+(len(range(0,12000,10)),))
+    # for idz,zpp in enumerate(range(0,12000,10)):
+    #
+    #     for phi in range(0, 360,10):
+    #         phi_ma, phi_de, phi_diff, iPSF_cos, iPSF = iPSF_misalignment(xv, yv, k, 0, 0, zpp, 0.3, np.pi / 2, 22, phi)
+    #         iPSF_RO_3D[...,idz] = iPSF_RO_3D[...,idz]  + iPSF
+    #
+    # tifffile.imwrite('./output/tif/RO_iPSF_3D.tif', iPSF_RO_3D)
